@@ -35,6 +35,8 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast"
+import { Loader2 } from "lucide-react";
  
 const formSchema = z.object({
   title: z.string().min(1).max(200),
@@ -44,6 +46,7 @@ const formSchema = z.object({
 });
 
 export default function Home() {
+  const { toast } = useToast()
   const organization = useOrganization();
   const user = useUser(); 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -78,6 +81,12 @@ export default function Home() {
 
             form.reset();
             setIsFileDialogOpen(false);
+
+            toast({
+              variant: "default",
+              title: "File uploaded successfully.",
+              description: "People in your organization can now view your file."
+            })
   }
 
   let orgId: string | undefined = undefined;
@@ -138,7 +147,12 @@ export default function Home() {
                             </FormItem>
                           )}
                         />
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit"
+                          disabled={form.formState.isSubmitting} className="flex gap-1">
+                            {form.formState.isSubmitting && (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            )}
+                            Submit</Button>
                       </form>
                     </Form>
                 </DialogDescription>
