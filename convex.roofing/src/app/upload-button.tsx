@@ -81,7 +81,7 @@ export function UploadButton() {
               variant: "default",
               title: "File uploaded successfully.",
               description: "People in your organization can now view your file."
-            })
+            });
   }
 
   let orgId: string | undefined = undefined;

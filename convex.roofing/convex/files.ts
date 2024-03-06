@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { MutationCtx, QueryCtx, mutation, query } from "./_generated/server"; 
+import { MutationCtx, QueryCtx, internalMutation, mutation, query } from "./_generated/server"; 
 import { getUser } from "./users";
 
 export const generateUploadUrl = mutation(async (ctx) => {
@@ -14,7 +14,7 @@ export const generateUploadUrl = mutation(async (ctx) => {
 
 async function hasAccessToOrg(ctx: QueryCtx | MutationCtx,
 	tokenIdentifier: string, 
-	orgId: string
+	orgId: string,
 	) {
 	const user = await getUser(ctx, tokenIdentifier);
 
@@ -82,4 +82,33 @@ export const getFiles = query({
 			.withIndex("by_orgId", q => q.eq("orgId", args.orgId))
 			.collect();
 	},
+});
+
+export const deleteFile = mutation({
+	args: { fileId: v.id("files") },
+	async handler(ctx, args) {
+		const identity = await ctx.auth.getUserIdentity();
+
+		if (!identity) {
+			throw new ConvexError("You do not have access to this organization.");
+		}
+
+		const file = await ctx.db.get(args.fileId);
+
+		if (!file) {
+			throw new ConvexError("This file does not exist.");
+		}
+
+		const hasAccess = await hasAccessToOrg(
+			ctx, 
+			identity.tokenIdentifier, 
+			file.orgId 
+			);
+
+			if (!hasAccess) {
+				throw new ConvexError("You do not have authorization to delete this file. Request permission or speak with your Administrator");
+			}
+
+			await ctx.db.delete(args.fileId); 
+		},
 });
