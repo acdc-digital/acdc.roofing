@@ -1,7 +1,7 @@
 "use client"; 
 
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import { FileIcon, Loader2, StarIcon } from "lucide-react";
 
 import { 
   useOrganization,
@@ -15,6 +15,8 @@ import { UploadButton } from "./upload-button";
 import { Filecard } from "./file-card";
 import { SearchBar } from "./search-bar";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function Placeholder() {
   return (
@@ -50,6 +52,22 @@ export default function Home() {
   return (
     <main className="container mx-auto pt-12">
 
+      <div className="flex gap-8"> 
+        <div className="w-44 mt-20 flex flex-col gap-2">
+          <Link href="/">
+            <Button variant={"link"} className="flex gap-2">
+              <FileIcon /> All Files
+            </Button>
+          </Link>
+
+          <Link href="/favorites">
+            <Button variant={"link"} className="flex gap-2">
+              <StarIcon /> Favorites
+            </Button>
+          </Link> 
+        </div>
+
+      <div className="w-full">
       { isLoading && 
         <div className="flex flex-col gap-8 w-full items-center mt-32">
           <Loader2 className="h-32 w-32 animate-spin text-gray-500" />
@@ -59,7 +77,7 @@ export default function Home() {
       {!isLoading && (
         <>
         <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold">Your Files</h1>
+            <h1 className="text-4xl font-bold">Facility Manager</h1>
 
             <SearchBar query={query} setQuery={setQuery} />
 
@@ -68,13 +86,15 @@ export default function Home() {
 
             {files.length === 0 && <Placeholder /> }
 
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 gap-4">
             {files?.map((file) => {
               return <Filecard key={file._id} file={file} />
             })}
             </div>
         </>
-      )}
+        )}
+        </div>
+      </div>
     </main>
   );
 }
