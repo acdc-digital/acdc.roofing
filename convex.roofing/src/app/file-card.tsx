@@ -6,7 +6,7 @@ import {
 	CardHeader,
 	CardTitle,
   } from "@/components/ui/card"
-import { Doc } from "../../convex/_generated/dataModel";
+import { Doc, Id } from "../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -28,11 +28,12 @@ import {
 	AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
 
-import { MoreVertical, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { GanttChartIcon, ImageIcon, MoreVertical, FileTextIcon, Trash2Icon, TablePropertiesIcon } from "lucide-react";
+import { ReactNode, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
 
 function FilecardActions({ file }: { file: Doc<"files"> }) {
 	const deleteFile = useMutation(api.files.deleteFile);
@@ -84,22 +85,52 @@ function FilecardActions({ file }: { file: Doc<"files"> }) {
 	);
 }
 
+function getFileUrl(fileId: Id<"_storage">): string {
+	return `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
+}
+
 export function Filecard({ file }: { file: Doc<"files"> }) {
+
+	const typeIcons = {
+		"image": <ImageIcon />,
+		"pdf": <FileTextIcon />,
+		"csv": <TablePropertiesIcon />,
+	  } as Record<Doc<"files">["type"], ReactNode>;
+
 	return (
 		<Card>
   <CardHeader className="relative">
-    <CardTitle>{file.name} 
+    <CardTitle className="flex gap-2">
+		<div className="flex justify-center">{typeIcons[file.type]}</div>
+		{file.name} 
 	</CardTitle>
 	<div className="absolute top-4 right-2">
 	<FilecardActions file={file} />
 	</div>
     {/* <CardDescription>Card Description</CardDescription> */} 
   </CardHeader>
-  <CardContent>
-    <p>Card Content</p>
+  <CardContent className="h-[150px]">
+    {file.type === "image" && (
+		<Image 
+		alt={file.name}
+		width="200"
+		height="100"
+		src={getFileUrl(file.fileId)}
+		/>
+	)}
+
+	{file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
+	{file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
   </CardContent>
   <CardFooter>
-	<Button>Download</Button>
+	<Button
+	onClick={() => {
+	// open a new tab to the file location on Convex 
+	window.open(getFileUrl(file.fileId), "_blank");
+	}}
+	>
+		Download
+	</Button>
   </CardFooter>
 </Card>
 	);
