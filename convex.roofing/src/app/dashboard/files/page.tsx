@@ -9,7 +9,7 @@ import {
  } from "@clerk/nextjs"; 
 
 import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 
 import { UploadButton } from "./upload-button";
 import { Filecard } from "./file-card";
@@ -35,7 +35,7 @@ function Placeholder() {
         )
       }
 
-export default function Home() {
+export default function FilesPage() {
   const organization = useOrganization();
   const user = useUser(); 
   const [query, setQuery] = useState("");
@@ -50,28 +50,11 @@ export default function Home() {
 
 
   return (
-    <main className="container mx-auto pt-12">
-
-      <div className="flex gap-8"> 
-        <div className="w-44 mt-20 flex flex-col gap-2">
-          <Link href="/">
-            <Button variant={"link"} className="flex gap-2">
-              <FileIcon /> All Files
-            </Button>
-          </Link>
-
-          <Link href="/favorites">
-            <Button variant={"link"} className="flex gap-2">
-              <StarIcon /> Favorites
-            </Button>
-          </Link> 
-        </div>
-
-      <div className="w-full">
-      { isLoading && 
-        <div className="flex flex-col gap-8 w-full items-center mt-32">
-          <Loader2 className="h-32 w-32 animate-spin text-gray-500" />
-          <div className="text-2xl">Loading... </div>
+  		<div>
+      	  { isLoading && 
+        	<div className="flex flex-col gap-8 w-full items-center mt-32">
+          		<Loader2 className="h-32 w-32 animate-spin text-gray-500" />
+          	<div className="text-2xl">Loading... </div>
         </div>}
 
       {!isLoading && (
@@ -94,7 +77,5 @@ export default function Home() {
         </>
         )}
         </div>
-      </div>
-    </main>
   );
 }
