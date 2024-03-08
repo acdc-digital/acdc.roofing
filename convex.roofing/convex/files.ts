@@ -83,6 +83,7 @@ export const getFiles = query({
 		orgId: v.string(),
 		query: v.optional(v.string()),
 		favorites: v.optional(v.boolean()),
+		deletedOnly: v.optional(v.boolean()),
 	}, 
 	async handler(ctx, args) {
 
@@ -121,6 +122,12 @@ export const getFiles = query({
 				);
 			}
 
+			if (args.deletedOnly) {
+				files = files.filter((file) => file.shouldDelete);
+			} else {
+				files = files.filter((file) => !file.shouldDelete);
+			}
+
 			return files; 
 
 		},
@@ -142,9 +149,10 @@ export const deleteFile = mutation({
 			throw new ConvexError("Administrator access is required to delete this file.");
 		}
 
-		await ctx.db.delete(args.fileId); 
-
-		},
+		await ctx.db.patch(args.fileId, {
+			shouldDelete: true, 
+		});
+	},
 });
 
 export const toggleFavorite = mutation({

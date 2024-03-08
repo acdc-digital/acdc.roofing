@@ -56,7 +56,7 @@ function FilecardActions({
 				<AlertDialogHeader>
 				<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 				<AlertDialogDescription>
-					This action cannot be undone. This will permanently delete your files and remove your data from our servers.
+					This action has marked the file for deletion. This file will permanently delete and remove your data from our servers periodically.
 				</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
@@ -68,8 +68,8 @@ function FilecardActions({
 					});
 					toast({
 						variant: "default",
-						title: "File deleted successfully.",
-						description: "This file is now no longer accessible to your organzation."
+						title: "File marked for Deletion",
+						description: "This file is now only accessible in the Trashcan Folder for deletion in the near future."
 					  });
 					}}
 			   	  >
