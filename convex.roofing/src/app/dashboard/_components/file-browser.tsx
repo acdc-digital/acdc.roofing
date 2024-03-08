@@ -25,7 +25,7 @@ function Placeholder() {
             alt="Facility image for empty state in Dashboard directory."
             width="400"
             height="400"
-            src="empty-page.svg"
+            src="/empty-page.svg"
             /> 
               <div className="text-xl mt-6">
               There are currently no files in your Facility Directory.
