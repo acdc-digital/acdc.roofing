@@ -33,6 +33,7 @@ import { useForm } from "react-hook-form"
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react";
+import { Toast } from "@/components/ui/toast";
  
 const formSchema = z.object({
   title: z.string().min(1).max(200),
@@ -79,7 +80,7 @@ export function UploadButton() {
       'text/csv': "csv",
     } as Record<string, Doc<"files">["type"]>;
 
-    if (!orgId) return; 
+          try { 
             await createFile({
               name: values.title, 
               fileId: storageId,
@@ -95,6 +96,13 @@ export function UploadButton() {
               title: "File uploaded successfully.",
               description: "People in your organization can now view your file."
             });
+          } catch (err) {
+            toast({
+              variant: "destructive",
+              title: "Something went wrong.",
+              description: "Your file could not be uploaded, try again later."
+            });
+          }
   }
 
   let orgId: string | undefined = undefined;
