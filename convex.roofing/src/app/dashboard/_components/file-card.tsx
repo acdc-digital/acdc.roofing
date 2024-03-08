@@ -28,7 +28,7 @@ import {
 	AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
 
-import { GanttChartIcon, ImageIcon, MoreVertical, FileTextIcon, Trash2Icon, TablePropertiesIcon, StarIcon, StarHalf } from "lucide-react";
+import { GanttChartIcon, ImageIcon, MoreVertical, FileTextIcon, Trash2Icon, TablePropertiesIcon, StarIcon, StarHalf, UndoIcon } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -44,6 +44,7 @@ function FilecardActions({
 		isFavorited: boolean; 
 	}) {
 	const deleteFile = useMutation(api.files.deleteFile);
+	const restoreFile = useMutation(api.files.restoreFile);
 	const toggleFavorite = useMutation(api.files.toggleFavorite);
 	const { toast } = useToast();
 
@@ -56,7 +57,7 @@ function FilecardActions({
 				<AlertDialogHeader>
 				<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 				<AlertDialogDescription>
-					This action has marked the file for deletion. This file will permanently delete and remove your data from our servers periodically.
+					This action has marked the file for deletion. This file will permanently delete and remove your data from our servers on the 30th, every month.
 				</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
@@ -104,9 +105,26 @@ function FilecardActions({
 				<Protect role="org:admin" fallback={<></>}>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem 
-				onClick={() => setIsConfirmOpen(true)}
-				className="flex gap-1 text-red-600 items-center cursor-pointer">
-					<Trash2Icon className="w-4 h-4"/> Delete
+				onClick={() => {
+					if (file.shouldDelete) {
+						restoreFile({
+							fileId: file._id,
+						})
+					} else {
+					setIsConfirmOpen(true)
+					}
+				}}
+				className="flex gap-1 items-center cursor-pointer"
+				>
+					{file.shouldDelete ? (
+					<div className="flex gap-1 text-green-600 items-center cursor-pointer">
+					  <UndoIcon className="w-4 h-4" /> Restore
+					</div>
+					) : (
+					<div className="flex gap-1 text-red-600 items-center cursor-pointer">
+					  <Trash2Icon className="w-4 h-4" /> Delete
+					  </div>
+					)}
 				</DropdownMenuItem>
 				</Protect>
 			</DropdownMenuContent>

@@ -133,6 +133,23 @@ export const getFiles = query({
 		},
 	});
 
+export const deleteAllFiles = internalMutation({
+	args: {},
+	async handler(ctx) {
+		const files = await ctx.db
+		.query("files")
+		.withIndex("by_shouldDelete", (q) => q.eq("shouldDelete", true))
+		.collect();
+
+		await Promise.all(
+			files.map(async (file) => {
+			await ctx.storage.delete(file.fileId)
+			return await ctx.db.delete(file._id)
+		})
+	  );
+	},
+});
+
 export const deleteFile = mutation({
 	args: { fileId: v.id("files") },
 	async handler(ctx, args) {
@@ -151,6 +168,28 @@ export const deleteFile = mutation({
 
 		await ctx.db.patch(args.fileId, {
 			shouldDelete: true, 
+		});
+	},
+});
+
+export const restoreFile = mutation({
+	args: { fileId: v.id("files") },
+	async handler(ctx, args) {
+		const access = await hasAccessToFile(ctx, args.fileId);
+
+		if (!access) {
+			throw new ConvexError("You do not have access to this file.")
+		}
+
+		const isAdmin = access.user.orgIds.find(org => org.orgId === access.file.orgId)
+		?.role === "admin";
+
+		if (!isAdmin) {
+			throw new ConvexError("Administrator access is required to delete this file.");
+		}
+
+		await ctx.db.patch(args.fileId, {
+			shouldDelete: false, 
 		});
 	},
 });
