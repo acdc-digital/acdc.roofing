@@ -120,7 +120,7 @@ export function Filecard({ file }: { file: Doc<"files"> }) {
 	</div>
     {/* <CardDescription>Card Description</CardDescription> */} 
   </CardHeader>
-  <CardContent className="h-[150px]">
+  <CardContent className="flex">
     {file.type === "image" && (
 		<Image 
 		alt={file.name}
@@ -133,7 +133,7 @@ export function Filecard({ file }: { file: Doc<"files"> }) {
 	{file.type === "csv" && <GanttChartIcon className="w-20 h-20" />}
 	{file.type === "pdf" && <FileTextIcon className="w-20 h-20" />}
   </CardContent>
-  <CardFooter>
+  <CardFooter className="flex">
 	<Button
 	onClick={() => {
 	// open a new tab to the file location on Convex 

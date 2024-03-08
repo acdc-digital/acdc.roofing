@@ -35,7 +35,10 @@ function Placeholder() {
         )
       }
 
-export function FileBrowser({ title }: { title: string }) {
+export function FileBrowser({ title, favorites }: { 
+  title: string;
+  favorites?: boolean;
+  }) {
   const organization = useOrganization();
   const user = useUser(); 
   const [query, setQuery] = useState("");
@@ -45,7 +48,10 @@ export function FileBrowser({ title }: { title: string }) {
     orgId = organization.organization?.id ?? user.user?.id; 
   }
 
-  const files = useQuery(api.files.getFiles, orgId ? { orgId, query } : "skip"); 
+  const files = useQuery(
+    api.files.getFiles, 
+    orgId ? { orgId, query, favorites } : "skip"
+    ); 
   const isLoading = files === undefined;
 
 
