@@ -18,7 +18,7 @@ export const generateUploadUrl = mutation(async (ctx) => {
 	return await ctx.storage.generateUploadUrl();
   });
 
-async function hasAccessToOrg(
+export async function hasAccessToOrg(
 	ctx: QueryCtx | MutationCtx,
 	orgId: string,
 	) {
