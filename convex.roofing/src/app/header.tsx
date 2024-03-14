@@ -19,11 +19,11 @@ export function Header() {
           ACDC.digital
         </Link>
 
-        {/* <SignedIn>
+            <SignedIn>
               <Button variant={"outline"}>
                 <Link href="/dashboard/files">Your Files</Link>
               </Button>
-            </SignedIn> */}
+            </SignedIn> 
 
         <div className="flex gap-2">
           <OrganizationSwitcher />
